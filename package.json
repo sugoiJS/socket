@@ -1,0 +1,36 @@
+{
+  "name": "@sugoi/socket",
+  "version": "1.0.3",
+  "description": "sugoi framework socket handler, based on socket.io",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "test": "echo test not found",
+    "docs": "..\\node_modules\\.bin\\typedoc --out ..\\dist\\docs\\sockets --excludeNotExported --excludeProtected --excludePrivate --readme .\\README.md --mode modules --hideGenerator",
+    "update:patch": "rmdir /S dist && tsc && npm version patch && npm publish && npm run docs",
+    "update:minor": "rmdir /S dist && tsc && npm version minor && npm publish && npm run docs",
+    "update:major": "rmdir /S dist && tsc && npm version major && npm publish && npm run docs"
+  },
+  "files": [
+    "dist/**/*"
+  ],
+  "keywords": [
+    "socket.io",
+    "decorators",
+    "annotations",
+    "framework"
+  ],
+  "author": "Orel Balilti",
+  "license": "MIT",
+  "dependencies": {
+    "rxjs": "^5.5.6",
+    "socket.io": "^2.0.4",
+    "socket.io-cookie": "0.0.1",
+    "@sugoi/core": "1.0.0"
+  },
+  "devDependencies": {
+    "@types/socket.io": "^1.4.33",
+    "@types/socket.io-client": "^1.4.32",
+    "typescript": "^2.7.2"
+  }
+}
