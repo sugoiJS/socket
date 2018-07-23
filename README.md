@@ -1,6 +1,6 @@
 # @Sugoi\socket
 
-![Sugoi logo](../assets/logo_inverse.png)
+![Sugoi logo](https://sugoijs.com/assets/logo_inverse.png)
 
 
 ## Introduction
