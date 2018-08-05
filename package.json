@@ -19,14 +19,19 @@
     "socket.io",
     "decorators",
     "annotations",
-    "framework"
+    "framework",
+    "module",
+    "@sugoi",
+    "sugoi",
+    "@sugoijs",
+    "sugoijs"
   ],
   "author": "Orel Balilti",
   "license": "MIT",
   "dependencies": {
     "socket.io": "^2.0.4",
     "socket.io-cookie": "0.0.1",
-    "@sugoi/core": "1.0.0"
+    "@sugoi/core": "1.2.4"
   },
   "devDependencies": {
     "@types/socket.io": "^1.4.33",
