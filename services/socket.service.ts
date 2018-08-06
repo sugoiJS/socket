@@ -1,5 +1,5 @@
-import * as SocketIOStatic from "socket.io";
-import * as socketCookieParser from "socket.io-cookie";
+import {SocketIOStatic} from "../index";
+import {socketCookieParser} from "../index";
 import {injectable} from "inversify";
 import {CONNECTION_STATUS} from "@sugoi/core";
 

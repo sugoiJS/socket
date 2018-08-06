@@ -1,5 +1,5 @@
 
-import * as SocketIOStatic from "socket.io";
+import {SocketIOStatic} from "../index";
 
 export interface ISocketHandler{
     socket:SocketIOStatic.Socket;
