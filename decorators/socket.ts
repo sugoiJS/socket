@@ -12,7 +12,7 @@ import {socketService} from "../services/socket.service";
  * @param {string} namespace
  * @returns {(target, propertyKey: string, descriptor: PropertyDescriptor) => any}
  */
-export function socketOn(event:string,namespace:string="/"){
+export function SocketOn(event:string,namespace:string="/"){
     return function (target, propertyKey: string, descriptor: PropertyDescriptor){
         socketService.addHandler(event, (data,socket)=>target[propertyKey](data,socket),namespace);
     }

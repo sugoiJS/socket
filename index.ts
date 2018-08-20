@@ -1,4 +1,4 @@
-export {socketOn} from "./decorators/socket";
+export {SocketOn} from "./decorators/socket";
 
 export {ISocketHandler} from "./interfaces/socket-handler.interface";
 
