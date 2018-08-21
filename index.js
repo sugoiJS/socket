@@ -1,0 +1,10 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var socket_1 = require("./decorators/socket");
+exports.SocketOn = socket_1.SocketOn;
+var socket_service_1 = require("./services/socket.service");
+exports.socketService = socket_service_1.socketService;
+var SocketIOStatic = require("socket.io");
+exports.SocketIOStatic = SocketIOStatic;
+var socketCookieParser = require("socket.io-cookie");
+exports.socketCookieParser = socketCookieParser;

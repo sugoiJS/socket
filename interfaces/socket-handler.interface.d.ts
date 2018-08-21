@@ -1,0 +1,9 @@
+/// <reference types="socket.io" />
+import { SocketIOStatic } from "../index";
+export interface ISocketHandler {
+    socket: SocketIOStatic.Socket;
+    events: Array<{
+        name: string;
+        callback: (...values: any[]) => void;
+    }>;
+}
