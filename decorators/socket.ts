@@ -3,7 +3,7 @@ import {socketService} from "../services/socket.service";
 /**
  * Register event callback per namespace
  * @example
- *  @socketOn('log')
+ *  @SocketOn('log')
  *  logging(data,socket){
  *      console.log(data);
  *      socket.emit("logged",data);

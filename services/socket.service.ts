@@ -1,9 +1,11 @@
 import {SocketIOStatic} from "../index";
 import {socketCookieParser} from "../index";
-import {injectable} from "inversify";
-import {CONNECTION_STATUS} from "@sugoi/core";
+import {CONNECTION_STATUS} from "../constants/connection-status.constant";
+import {Injectable} from "@sugoi/core";
 
-@injectable()
+
+
+@Injectable()
 export abstract class socketService {
     protected static readonly socketServers: Map<string, { instance: SocketIOStatic.Server, status: CONNECTION_STATUS }> = new Map();
     private static readonly Handlers: Map<string, Array<{ event: string, callback: (...args) => void }>> = new Map();
@@ -22,11 +24,12 @@ export abstract class socketService {
 
     public static init(HttpServer,
                        namespace: string = "/",
-                       socketConfig={},
-                       connectionCallback:(socket?:SocketIOStatic.Socket)=>void = ()=>{},
-                       disconnectCallback:(socket?:SocketIOStatic.Socket)=>void = ()=>{}
-                       ): SocketIOStatic.Server {
-        const socketServer = require('socket.io')(HttpServer,socketConfig);
+                       socketConfig = {},
+                       connectionCallback: (socket?: SocketIOStatic.Socket) => void = () => {
+                       },
+                       disconnectCallback: (socket?: SocketIOStatic.Socket) => void = () => {
+                       }): SocketIOStatic.Server {
+        const socketServer = require('socket.io')(HttpServer, socketConfig);
         socketServer.use(socketCookieParser);
         socketServer.on('connection', (socket) => {
             connectionCallback(socket);
@@ -68,7 +71,7 @@ export abstract class socketService {
         }
     }
 
-    protected static setHandler(socket: SocketIOStatic.Socket, handler: { event: string, callback: (data,socket) => void }) :void {
-        socket.on(handler.event, data=>handler.callback(data,socket));
+    protected static setHandler(socket: SocketIOStatic.Socket, handler: { event: string, callback: (data, socket) => void }): void {
+        socket.on(handler.event, data => handler.callback(data, socket));
     }
 }
