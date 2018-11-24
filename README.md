@@ -69,4 +69,4 @@ For getting the socketIO server instance, use the getSocketServerByNamespace soc
 
 ## Documentation
 
-You can find further information on [Sugoi official website](http://www.sugoijs.com)
+You can find further information on [Sugoi official website](https://sugoijs.com)

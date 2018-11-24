@@ -1,8 +1,11 @@
-export {SocketOn} from "./decorators/socket";
+export {SocketHandler} from "./services/socket-handler.adapter";
+
+export {SocketServerEvents} from "./constants/socket-server-events.constant";
+
+export {SocketOn, SocketServerOn} from "./decorators/socket";
 
 export {ISocketHandler} from "./interfaces/socket-handler.interface";
 
-export {socketService} from "./services/socket.service";
 
 import * as SocketIOStatic from "socket.io";
 import * as socketCookieParser from "socket.io-cookie";

@@ -5,11 +5,11 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "test": "echo test not found",
+    "test": "jest --config=jest.config.js --coverage --detectOpenHandles",
     "docs": "..\\node_modules\\.bin\\typedoc --out ..\\dist\\docs\\sockets --json dist\\docs\\main.json --ignoreCompilerErrors --excludeNotExported --excludeProtected --excludePrivate --readme .\\README.md --mode file --hideGenerator --gitRevision '1.0.0' --externalPattern node_modules/**/* --excludeExternals",
-    "update:patch": " npm run build && npm version patch && npm publish && npm run docs",
-    "update:minor": " npm run build && npm version minor && npm publish && npm run docs",
-    "update:major": " npm run build && npm version major && npm publish && npm run docs",
+    "update:patch": "npm run build && npm version patch && npm publish && npm run docs",
+    "update:minor": "npm run build && npm version minor && npm publish && npm run docs",
+    "update:major": "npm run build && npm version major && npm publish && npm run docs",
     "build": "rmdir /S dist && tsc"
   },
   "files": [
@@ -36,6 +36,13 @@
     "@types/socket.io-client": "^1.4.32"
   },
   "devDependencies": {
-    "typescript": "^2.7.2"
+    "@types/jest": "^23.3.9",
+    "jest": "^23.6.0",
+    "socket.io-client": "^2.1.1",
+    "ts-jest": "^23.10.1"
+  },
+  "jest": {
+    "collectCoverage": true,
+    "coverageDirectory": "./dist/coverage"
   }
 }
