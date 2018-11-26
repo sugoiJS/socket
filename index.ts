@@ -1,10 +1,14 @@
+export * from "./utils/socket.utils";
+
+export {ISocketServerMiddleware} from "./interfaces/socket-server-middleware.interface";
+
 export {SocketHandler} from "./services/socket-handler.adapter";
 
 export {SocketServerEvents} from "./constants/socket-server-events.constant";
 
-export {SocketOn, SocketServerOn} from "./decorators/socket";
+export {SocketServerOnByHandler,SocketOnByHandler,SocketOn, SocketServerOn} from "./decorators/socket";
 
-export {ISocketHandler} from "./interfaces/socket-handler.interface";
+export {HandlerType} from "./services/socket-handler.adapter";
 
 
 import * as SocketIOStatic from "socket.io";

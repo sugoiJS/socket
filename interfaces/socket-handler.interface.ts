@@ -1,6 +1,7 @@
 
 import {SocketIOStatic} from "../index";
 import {HandlerType} from "../services/socket-handler.adapter";
+import {NamespaceHandler} from "../classes/namespace-handler.class";
 
 export interface ISocketHandler{
 
@@ -13,7 +14,7 @@ export interface ISocketHandler{
     deregisterEvent<T=any>(handlerType:HandlerType,event:string,namespace:string);
 
 
-    addNamespace(namespace: string):SocketIOStatic.Namespace
+    addNamespace(namespace: string):NamespaceHandler;
     getNamespace(namespace:string):SocketIOStatic.Namespace;
     getServer():SocketIOStatic.Server;
 
