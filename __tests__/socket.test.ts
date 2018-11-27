@@ -24,12 +24,12 @@ beforeAll(async () => {
         });
         for (let i = 0; i < SocketsAmount; i++) {
             const socket = io.connect(`http://[${httpServerAddr.address}]:${httpServerAddr.port}`,
-            {
-            'reconnection delay': 0,
-            'reopen delay': 0,
-            'force new connection': false,
-            transports: ['websocket'],
-            });
+                {
+                    'reconnection delay': 0,
+                    'reopen delay': 0,
+                    'force new connection': false,
+                    transports: ['websocket'],
+                });
             sockets.push(socket);
             socket.emit("connected");
         }
@@ -54,27 +54,50 @@ describe('basic socket features', () => {
 
     it('check last message', async () => {
         expect.assertions(2);
-        const msg = {msg:"testing message"};
-        sockets[1].emit("message",msg);
+        const msg = {msg: "testing message"};
+        sockets[1].emit("message", msg);
         return new Promise(resolve => {
             setTimeout(() => {
                 expect(SocketService.lastMessage['msg']).toEqual(msg.msg);
                 expect(SocketService.lastMessage['timestamp']).toBeDefined();
                 resolve();
-            },50)
+            }, 50)
         })
     });
 
     it('check last message - detached', async () => {
         expect.assertions(1);
         SocketHandler.getHandler().deregisterSocketEvent("message");
-        const msg = {msg:"testing message-2"};
-        sockets[1].emit("message",msg);
+        const msg = {msg: "testing message-2"};
+        sockets[1].emit("message", msg);
         return new Promise(resolve => {
             setTimeout(() => {
                 expect(SocketService.lastMessage['msg']).not.toEqual(msg.msg);
                 resolve();
-            },50)
+            }, 50)
+        })
+    });
+
+    it('check last message - detached single', async () => {
+        expect.assertions(2);
+
+        return new Promise(resolve => {
+            SocketHandler.getHandler()
+                .registerSocketEvent("message", SocketService.getMessage);
+
+            const msg = {msg: "testing message-7"};
+            sockets[1].emit("message", msg);
+            setTimeout(() => {
+                expect(SocketService.lastMessage['msg']).toEqual(msg.msg);
+
+                SocketHandler.getHandler().deregisterSocketEvent("message", SocketService.getMessage);
+                sockets[1].emit("message", msg);
+                setTimeout(() => {
+                    expect(SocketService.lastMessage['msg']).not.toEqual(msg.msg);
+                    resolve();
+                }, 50)
+            }, 50);
+
         })
     });
 
@@ -91,29 +114,26 @@ describe('basic socket features', () => {
 
 });
 
-// describe("dynamic events", () => {
-//     it('add handler for socket', async () => {
-//         expect.assertions(1);
-//
-//         return new Promise(resolve => {
-//
-//             function greetingHandler(socket, data) {
-//                 console.log(data);
-//                 expect(data).toEqual(["world", "1"]);
-//                 resolve();
-//             }
-//
-//             SocketHandler.getHandler().registerSocketEvent("greeting", greetingHandler)
-//             console.log(sockets[1].eventNames)
-//             // ,
-//                 // [
-//                 //     (socket, ...data: Array<any>) => {
-//                 //         console.log(data);
-//                 //         data.push("middleware");
-//                 //     }
-//                 // ]);
-//             SocketHandler.getHandler().getNamespace("/").emit("greeting", ["world", "1"]);
-//         })
-//     });
-//
-// });
+describe("dynamic events", () => {
+    it('add handler for socket', async () => {
+        expect.assertions(1);
+
+        return new Promise(resolve => {
+
+            function greetingHandler(socket, data) {
+                console.log(data);
+                expect(data).toEqual(["world", "1", "middleware"]);
+                resolve();
+            }
+
+            SocketHandler.getHandler().registerSocketEvent("greeting", greetingHandler,
+                [
+                    (socket, ...data: Array<any>) => {
+                        data[0].push("middleware");
+                    }
+                ]);
+            sockets[1].emit("greeting", ["world", "1"]);
+        })
+    });
+
+});

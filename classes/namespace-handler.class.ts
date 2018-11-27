@@ -24,10 +24,10 @@ export class NamespaceHandler {
         this.middlewares.unshift(socketCookieParser);
         this.middlewares.forEach(middleware => instance.use(middleware));
 
-        this.serverEvents.forEach(serverEvent=>this.addHandlerByType(HandlerType.SERVER,serverEvent.event,serverEvent.callback))
+        this.serverEvents.forEach(serverEvent => this.addHandlerByType(HandlerType.SERVER, serverEvent.event, serverEvent.callback))
         instance.on(SocketServerEvents.CONNECTION, (socket) => {
             this.events.forEach(event => {
-                socket.on(event.event,data=>event.callback(socket,data));
+                socket.on(event.event, data => event.callback(socket, data));
             });
         });
     }
@@ -42,30 +42,33 @@ export class NamespaceHandler {
             case HandlerType.SOCKET:
                 this.events.push(socketEvent);
         }
-        this.addHandlerByType(eventType,event,socketEvent.callback)
+        this.addHandlerByType(eventType, event, socketEvent.callback)
     }
 
 
-    deregisterEvent(eventType: HandlerType, eventName: string) {
+    deregisterEvent(eventType: HandlerType, eventName: string, functionToRemove: (...args) => void) {
         eventName = eventName.toLowerCase();
         switch (eventType) {
             case HandlerType.SOCKET:
                 this.events = this.events.filter(event => event.event.toLowerCase() !== eventName);
                 Object['values'](this.instance.connected).forEach((socket: SocketIOStatic.Socket) => {
-                    socket.removeListener(eventName, ()=>null);
+                    functionToRemove === null
+                        ? socket.removeAllListeners(eventName)
+                        : socket.removeListener(eventName, functionToRemove);
                 });
                 break;
             case HandlerType.SERVER:
                 this.serverEvents = this.serverEvents.filter(event => event.event.toLowerCase() !== eventName);
-                this.instance.off(eventName, null);
+                functionToRemove === null
+                    ? this.instance.removeAllListeners(eventName)
+                    : this.instance.removeListener(eventName, functionToRemove);
                 break;
         }
     }
 
-    public addServerEventHandler(event: string, callback: (...args) => void, ...middlewares:Array<ISocketMiddleware>): void {
+    public addServerEventHandler(event: string, callback: (...args) => void, ...middlewares: Array<ISocketMiddleware>): void {
         this.registerEvent(HandlerType.SERVER, event, callback, ...middlewares);
     }
-
 
 
     private addHandlerByType(handlerType: HandlerType, event, callback): void {
@@ -83,7 +86,7 @@ export class NamespaceHandler {
 
 
     private setSocketHandlers(event: string, callback: any) {
-        for(let socketId of Object.keys(this.instance.connected)) {
+        for (let socketId of Object.keys(this.instance.connected)) {
             const socket = this.instance.connected[socketId];
             socket.on(event, (data) => callback(socket, data));
         }
@@ -91,9 +94,9 @@ export class NamespaceHandler {
     }
 
 
-    private setServerHandler(event:string,
-                               callback:any): void {
-        this.instance.on(event, (data)=>callback(data,this.instance));
+    private setServerHandler(event: string,
+                             callback: any): void {
+        this.instance.on(event, (data) => callback(data, this.instance));
     }
 
 }

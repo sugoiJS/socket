@@ -50,7 +50,7 @@ export class SocketHandler implements ISocketHandler {
         }
         else if (this.socketHandlers.size > 0) {
             return this.socketHandlers.get(Symbol.for(SocketHandler.IDPrefix + 0));
-        }else {
+        } else {
             return null;
         }
     }
@@ -60,9 +60,9 @@ export class SocketHandler implements ISocketHandler {
         this.addNamespace(namespace)
     }
 
-    addNamespace(namespace: string):NamespaceHandler;
-    addNamespace(namespace: string, ...middlewares: Array<ISocketServerMiddleware>):NamespaceHandler;
-    addNamespace(namespace: string, ...middlewares: Array<ISocketServerMiddleware>) :NamespaceHandler{
+    addNamespace(namespace: string): NamespaceHandler;
+    addNamespace(namespace: string, ...middlewares: Array<ISocketServerMiddleware>): NamespaceHandler;
+    addNamespace(namespace: string, ...middlewares: Array<ISocketServerMiddleware>): NamespaceHandler {
         if (!(!!namespace && !this._namespaces.has(namespace))) return;
 
         const namespaceServer = this._socketServer.of(namespace);
@@ -86,7 +86,7 @@ export class SocketHandler implements ISocketHandler {
 
     static RegisterEvent<T>(handlerType: HandlerType, event: string, callback: (socket: SocketIOStatic.Socket, data: T) => void, namespace: string);
     static RegisterEvent<T>(handlerType: HandlerType, event: string, callback: (socket: SocketIOStatic.Socket, data: T) => void, middlewares: Array<ISocketMiddleware>);
-    static RegisterEvent<T>(handlerType: HandlerType, event: string, callback: (socket: SocketIOStatic.Socket, data: T) => void, middlewares: Array<ISocketMiddleware>,namespace:string);
+    static RegisterEvent<T>(handlerType: HandlerType, event: string, callback: (socket: SocketIOStatic.Socket, data: T) => void, middlewares: Array<ISocketMiddleware>, namespace: string);
     static RegisterEvent<T=any>(handlerType: HandlerType, event, callback, middlewares?: Array<any> | string, namespace: string = "/") {
         if (typeof middlewares === "string") {
             namespace = middlewares as string;
@@ -106,12 +106,12 @@ export class SocketHandler implements ISocketHandler {
         if (typeof middlewares === "string") {
             namespace = middlewares as string;
             middlewares = []
-        }else if(!namespace){
+        } else if (!namespace) {
             namespace = "/"
         }
         let handler = this.getNamespaceHandler(namespace);
-        if(!handler && !(handler = this.addNamespace(namespace)))
-            SocketHandler.RegisterEvent(handlerType, event, callback, middlewares,namespace);
+        if (!handler && !(handler = this.addNamespace(namespace)))
+            SocketHandler.RegisterEvent(handlerType, event, callback, middlewares, namespace);
         else
             handler.registerEvent(handlerType, event, callback, ...middlewares);
     }
@@ -120,7 +120,7 @@ export class SocketHandler implements ISocketHandler {
     registerSocketEvent<T>(event: string, callback: (socket: SocketIOStatic.Socket, data: T) => void, namespace: string);
     registerSocketEvent<T>(event: string, callback: (socket: SocketIOStatic.Socket, data: T) => void, middlewares: Array<ISocketMiddleware>);
     registerSocketEvent<T>(event: string, callback: (socket: SocketIOStatic.Socket, data: T) => void, middlewares: Array<ISocketMiddleware>, namespace: string);
-    registerSocketEvent<T=any>(event: string, callback: (socket: SocketIOStatic.Socket, data: T) => void, middlewares?: Array<ISocketMiddleware> | string, namespace: string ="/") {
+    registerSocketEvent<T=any>(event: string, callback: (socket: SocketIOStatic.Socket, data: T) => void, middlewares?: Array<ISocketMiddleware> | string, namespace: string = "/") {
         this.registerEvent(HandlerType.SOCKET, event, callback, middlewares as Array<ISocketMiddleware>, namespace);
     }
 
@@ -128,34 +128,37 @@ export class SocketHandler implements ISocketHandler {
     registerServerEvent<T>(event: string, callback: (socket: SocketIOStatic.Socket, data: T) => void, namespace: string);
     registerServerEvent<T>(event: string, callback: (socket: SocketIOStatic.Socket, data: T) => void, middlewares: Array<ISocketMiddleware>);
     registerServerEvent<T>(event: string, callback: (socket: SocketIOStatic.Socket, data: T) => void, middlewares: Array<ISocketMiddleware>, namespace: string);
-    registerServerEvent<T=any>(event: string, callback: (socket: SocketIOStatic.Socket, data: T) => void, middlewares?: Array<ISocketMiddleware> | string, namespace: string="/") {
+    registerServerEvent<T=any>(event: string, callback: (socket: SocketIOStatic.Socket, data: T) => void, middlewares?: Array<ISocketMiddleware> | string, namespace: string = "/") {
         this.registerEvent(HandlerType.SERVER, event, callback, middlewares as Array<ISocketMiddleware>, namespace);
     }
 
     deregisterEvent(eventType: HandlerType, event: string);
-    deregisterEvent(eventType: HandlerType, event: string, namespace: string);
-    deregisterEvent(eventType: HandlerType, event, namespace="/") {
+    deregisterEvent(eventType: HandlerType, event: string, functionToRemove: (...args) => void);
+    deregisterEvent(eventType: HandlerType, event: string, functionToRemove: (...args) => void, namespace: string);
+    deregisterEvent(eventType: HandlerType, event, functionToRemove: (...args) => void = null, namespace = "/") {
         const handler = this.getNamespaceHandler(namespace);
         if (handler)
-            handler.deregisterEvent(eventType, event);
+            handler.deregisterEvent(eventType, event, functionToRemove);
     }
 
 
     deregisterSocketEvent(event: string);
-    deregisterSocketEvent(event: string, namespace: string);
-    deregisterSocketEvent(event, namespace="/") {
+    deregisterSocketEvent(event: string, functionToRemove: (...args) => void);
+    deregisterSocketEvent(event: string, functionToRemove: (...args) => void, namespace: string);
+    deregisterSocketEvent(event, functionToRemove: (...args) => void = null, namespace = "/") {
         const handler = this.getNamespaceHandler(namespace);
         if (handler)
-            handler.deregisterEvent(HandlerType.SOCKET, event);
+            handler.deregisterEvent(HandlerType.SOCKET, event, functionToRemove);
     }
 
 
     deregisterServerEvent(event: string);
-    deregisterServerEvent(event: string, namespace: string);
-    deregisterServerEvent(event, namespace="/") {
+    deregisterServerEvent(event: string, functionToRemove: (...args) => void);
+    deregisterServerEvent(event: string, functionToRemove: (...args) => void, namespace: string);
+    deregisterServerEvent(event, functionToRemove: (...args) => void = null, namespace = "/") {
         const handler = this.getNamespaceHandler(namespace);
         if (handler)
-            handler.deregisterEvent(HandlerType.SERVER, event);
+            handler.deregisterEvent(HandlerType.SERVER, event, functionToRemove);
     }
 
     getNamespace(namespace: string): SocketIOStatic.Namespace {

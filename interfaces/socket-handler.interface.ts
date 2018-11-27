@@ -10,8 +10,8 @@ export interface ISocketHandler{
     registerEvent<T=any>(handlerType:HandlerType,event:string,callback:(socket:SocketIOStatic.Socket,data:T)=>void,middlewares:Array<(socket:SocketIOStatic.Socket,data:T,next:any)=>void>);
     registerEvent<T=any>(handlerType:HandlerType,event:string,callback:(socket:SocketIOStatic.Socket,data:T)=>void,middlewares:Array<(socket:SocketIOStatic.Socket,data:T,next:any)=>void>,namespace:string);
 
-    deregisterEvent<T=any>(handlerType:HandlerType,event:string);
-    deregisterEvent<T=any>(handlerType:HandlerType,event:string,namespace:string);
+    deregisterEvent<T=any>(handlerType:HandlerType,event:string,functionToRemove:(...args)=>void);
+    deregisterEvent<T=any>(handlerType:HandlerType,event:string,functionToRemove:(...args)=>void,namespace:string);
 
 
     addNamespace(namespace: string):NamespaceHandler;
