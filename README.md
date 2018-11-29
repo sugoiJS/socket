@@ -34,7 +34,8 @@ Bootstrapping done by:
 
  > socketOptions - the socket server configurations
 
-    socketService.init(serverInstance,namespace,socketOptions);
+    SocketHandler.init(serverInstance, socketConfig: SocketIOStatic.ServerOptions, namespace: string): SocketIOStatic.Server
+
 
 > The socketOptions variable interface is the same as on [socket.io documentation](https://socket.io/docs/server-api/)
 
@@ -54,7 +55,10 @@ This decorator registers the callback for an event.
 
 Example:
 
-    @SocketOn('message')
+    // SocketOn(event: string, namespace: string = "/", ...middlewares:Array<ISocketMiddleware>) {
+    @SocketOn('message',"/",(socket,data)=>{
+        console.log("log message data: %s from socket id: %s",data,socket.id);
+    })
     function(data,socket){
         socket.to(data.room).emit('message',data.message)
     }
