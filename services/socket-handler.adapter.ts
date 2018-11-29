@@ -43,10 +43,10 @@ export class SocketHandler implements ISocketHandler {
     }
 
     public static getHandler(): SocketHandler
-    public static getHandler(id: number): SocketHandler
-    public static getHandler(id: number = null): SocketHandler {
+    public static getHandler(id: string): SocketHandler
+    public static getHandler(id: string = null): SocketHandler {
         if (id) {
-            return this.socketHandlers.get(Symbol(id));
+            return this.socketHandlers.get(Symbol.for(id));
         }
         else if (this.socketHandlers.size > 0) {
             return this.socketHandlers.get(Symbol.for(SocketHandler.IDPrefix + 0));
