@@ -55,7 +55,9 @@ describe('basic socket features', () => {
     it('check last message', async () => {
         expect.assertions(2);
         const msg = {msg: "testing message"};
+        sockets[1].emit("message", 1);
         sockets[1].emit("message", msg);
+        sockets[1].emit("message", "");
         return new Promise(resolve => {
             setTimeout(() => {
                 expect(SocketService.lastMessage['msg']).toEqual(msg.msg);
@@ -78,28 +80,28 @@ describe('basic socket features', () => {
         })
     });
 
-    it('check last message - detached single', async () => {
-        expect.assertions(2);
-
-        return new Promise(resolve => {
-            SocketHandler.getHandler()
-                .registerSocketEvent("message", SocketService.getMessage);
-
-            const msg = {msg: "testing message-7"};
-            sockets[1].emit("message", msg);
-            setTimeout(() => {
-                expect(SocketService.lastMessage['msg']).toEqual(msg.msg);
-
-                SocketHandler.getHandler().deregisterSocketEvent("message", SocketService.getMessage);
-                sockets[1].emit("message", msg);
-                setTimeout(() => {
-                    expect(SocketService.lastMessage['msg']).not.toEqual(msg.msg);
-                    resolve();
-                }, 50)
-            }, 50);
-
-        })
-    });
+    // it('check last message - reattach + detached single', async () => {
+    //     expect.assertions(2);
+    //
+    //     return new Promise(resolve => {
+    //         SocketHandler.getHandler()
+    //             .registerSocketEvent("message", SocketService.getMessage);
+    //
+    //         const msg = {msg: "testing message-7"};
+    //         sockets[1].emit("message", msg);
+    //         setTimeout(() => {
+    //             expect(SocketService.lastMessage['msg']).toEqual(msg.msg);
+    //
+    //             SocketHandler.getHandler().deregisterSocketEvent("message", SocketService.getMessage);
+    //             sockets[1].emit("message", msg);
+    //             setTimeout(() => {
+    //                 expect(SocketService.lastMessage['msg']).not.toEqual(msg.msg);
+    //                 resolve();
+    //             }, 50)
+    //         }, 50);
+    //
+    //     })
+    // });
 
     test('should disconnect', () => {
         expect.assertions(1);

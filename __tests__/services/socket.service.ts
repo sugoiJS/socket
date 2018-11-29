@@ -36,6 +36,9 @@ export class SocketService {
     }
 
     @SocketOnByHandler("message", "/", 0, ((socket, data: any) => {
+        if(!data){
+            BreakMiddleware()
+        }
         data.timestamp = new Date();
     }))
     static getMessage(socket, data) {

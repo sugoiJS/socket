@@ -12,9 +12,7 @@ export class SocketEvent {
             const next = (async function () {
                 const clonedMiddlewares = [...middlewares];
                 while (clonedMiddlewares.length > 0) {
-                    const next = clonedMiddlewares.pop() || function () {
-                        return;
-                    };
+                    const next = clonedMiddlewares.pop();
                     try {
                         await next.call(next, socket, ...data);
                     } catch (err) {
