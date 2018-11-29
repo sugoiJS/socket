@@ -12,7 +12,7 @@ export enum HandlerType {
 
 export class SocketHandler implements ISocketHandler {
     private static counter = 0;
-    private static IDPrefix = "SUG_SOCKET_HANDLER";
+    private static IDPrefix = "SUG_SOCKET_HANDLER_";
 
     protected static socketHandlers: Map<Symbol, SocketHandler> = new Map();
     protected static _pendingMap: { [prop: string]: Map<string, Array<any>> } = {
@@ -21,7 +21,7 @@ export class SocketHandler implements ISocketHandler {
     };
 
     private _namespaces: Map<string, NamespaceHandler> = new Map();
-    private _socketServer: SocketIOStatic.Server;
+    private _socketServer: IOptimizedServerInstance;
 
 
     public static init(HttpServer: any): SocketIOStatic.Server
@@ -36,7 +36,7 @@ export class SocketHandler implements ISocketHandler {
             socketHandler = this.socketHandlers.has(Symbol.for(id));
             socketHandler.addNamespace(namespace);
         } else {
-            socketHandler = new this(HttpServer, socketConfig, namespace);
+            socketHandler = new this(HttpServer, id, socketConfig, namespace);
             this.socketHandlers.set(Symbol.for(id), socketHandler);
         }
         return socketHandler.getServer();
@@ -55,8 +55,12 @@ export class SocketHandler implements ISocketHandler {
         }
     }
 
-    constructor(HttpServer, socketConfig: SocketIOStatic.ServerOptions, namespace: string = "/") {
+    protected constructor(HttpServer, id: string | number, socketConfig: SocketIOStatic.ServerOptions, namespace: string = "/") {
         this._socketServer = require('socket.io')(HttpServer, socketConfig);
+        this._socketServer['instanceId'] = id;
+        this._socketServer.getInstanceId = function () {
+            return this.instanceId;
+        };
         this.addNamespace(namespace)
     }
 
@@ -178,3 +182,7 @@ export class SocketHandler implements ISocketHandler {
 }
 
 
+export type IOptimizedServerInstance = SocketIOStatic.Server & {
+    getInstanceId(): string | number;
+    instanceId: string | number;
+};

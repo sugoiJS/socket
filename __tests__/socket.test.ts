@@ -48,6 +48,10 @@ describe('basic socket features', () => {
     it('should connect', () => {
         expect(SocketService.connectedAmount).toEqual(SocketsAmount);
     });
+
+    it('should have id', () => {
+        expect(ioServer.getInstanceId()).toBe("SUG_SOCKET_HANDLER_0");
+    });
     it('check last connect', () => {
         expect(SocketService.lastConnected).toEqual(sockets[1].id);
     });
