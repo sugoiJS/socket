@@ -1,6 +1,6 @@
 {
   "name": "@sugoi/socket",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "sugoi framework socket handler, based on socket.io",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
