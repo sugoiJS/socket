@@ -19,11 +19,11 @@ The SugoiJS socket module uses the [socket.io](https://www.npmjs.com/package/soc
 ### Bootstrapping
 Bootstrapping done by:
 
-    import {socketService} from "@sugoi/socket";
+    import {SocketHandler} from "@sugoi/socket";
 
     // serverInstance is express\koa instance
     // in case you are using @socket\server, the instance returns from the 'listen' method
-    socketService.init(serverInstance);
+    SocketHandler.init(serverInstance);
 
 
 #### Socket Options
@@ -69,7 +69,7 @@ You can use as many decorators as you want.
 
 For getting the socketIO server instance, use the getSocketServerByNamespace socketService class method.
 
-    const io:SocketIOStatic.Server = socketService.getSocketServerByNamespace("/");
+    const io:SocketIOStatic.Server = SocketHandler.getHandler().getServer();
 
 ## Documentation
 
