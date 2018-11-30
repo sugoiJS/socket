@@ -43,9 +43,9 @@ export function SocketOn(event: string, namespace: string = "/", ...middlewares:
 
 export function SocketOnByHandler(event: string);
 export function SocketOnByHandler(event: string, namespace: string);
-export function SocketOnByHandler(event: string, namespace: string, handlerId: number);
-export function SocketOnByHandler(event: string, namespace: string, handlerId: number, ...middlewares: Array<ISocketMiddleware>);
-export function SocketOnByHandler(event: string, namespace: string = "/", handlerId: number = null, ...middlewares: Array<ISocketMiddleware>) {
+export function SocketOnByHandler(event: string, namespace: string, handlerId: string);
+export function SocketOnByHandler(event: string, namespace: string, handlerId: string, ...middlewares: Array<ISocketMiddleware>);
+export function SocketOnByHandler(event: string, namespace: string = "/", handlerId: string = null, ...middlewares: Array<ISocketMiddleware>) {
     return function (target, propertyKey: string, descriptor: PropertyDescriptor) {
         registerSocketEvent(event,descriptor,target,middlewares,namespace,handlerId);
     }
@@ -77,9 +77,9 @@ export function SocketServerOn(event: string, namespace: string = "/", ...middle
 
 export function SocketServerOnByHandler(event: string);
 export function SocketServerOnByHandler(event: string, namespace: string);
-export function SocketServerOnByHandler(event: string, namespace: string, handlerId: number);
-export function SocketServerOnByHandler(event: string, namespace: string, handlerId: number, ...middlewares: Array<ISocketMiddleware>);
-export function SocketServerOnByHandler(event: string, namespace: string = "/", handlerId: number = null, ...middlewares: Array<ISocketMiddleware>) {
+export function SocketServerOnByHandler(event: string, namespace: string, handlerId: string);
+export function SocketServerOnByHandler(event: string, namespace: string, handlerId: string, ...middlewares: Array<ISocketMiddleware>);
+export function SocketServerOnByHandler(event: string, namespace: string = "/", handlerId: string = null, ...middlewares: Array<ISocketMiddleware>) {
     return function (target, propertyKey: string, descriptor: PropertyDescriptor) {
         registerServerEvent(event,descriptor,target,middlewares,namespace,handlerId);
     }
@@ -90,9 +90,9 @@ function registerServerEvent(event,descriptor,target,middlewares,namespace,handl
 
     let handler = SocketHandler.getHandler(handlerId);
     if (handler)
-        handler.registerServerEvent(event, (socket, data) => descriptor.value.apply(target, [socket, data]), middlewares,namespace);
+        handler.registerServerEvent(event, descriptor.value.bind(target), middlewares,namespace);
     else
-        SocketHandler.RegisterEvent(HandlerType.SERVER, event, (socket, data) => descriptor.value.apply(target, [socket, data]), middlewares,namespace);
+        SocketHandler.RegisterEvent(HandlerType.SERVER, event, descriptor.value.bind(target), middlewares,namespace);
 
 
 }
@@ -100,7 +100,7 @@ function registerServerEvent(event,descriptor,target,middlewares,namespace,handl
 function registerSocketEvent(event,descriptor,target,middlewares,namespace,handlerId = null){
     let handler = SocketHandler.getHandler(handlerId);
     if (handler)
-        handler.registerSocketEvent(event, (socket, data) => descriptor.value.apply(target, [socket, data]),middlewares, namespace);
+        handler.registerSocketEvent(event, descriptor.value.bind(target),middlewares, namespace);
     else
-        SocketHandler.RegisterEvent(HandlerType.SOCKET, event, (socket, data) => descriptor.value.apply(target, [socket, data]),middlewares, namespace);
+        SocketHandler.RegisterEvent(HandlerType.SOCKET, event, descriptor.value.bind(target),middlewares, namespace);
 }

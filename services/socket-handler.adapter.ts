@@ -11,8 +11,9 @@ export enum HandlerType {
 
 
 export class SocketHandler implements ISocketHandler {
-    private static counter = 0;
-    private static IDPrefix = "SUG_SOCKET_HANDLER_";
+    public static readonly COUNTER_START = 1;
+    public static readonly IDPrefix = "SUG_SOCKET_HANDLER_";
+    private static counter = SocketHandler.COUNTER_START;
 
     protected static socketHandlers: Map<Symbol, SocketHandler> = new Map();
     protected static _pendingMap: { [prop: string]: Map<string, Array<any>> } = {
@@ -49,15 +50,15 @@ export class SocketHandler implements ISocketHandler {
             return this.socketHandlers.get(Symbol.for(id));
         }
         else if (this.socketHandlers.size > 0) {
-            return this.socketHandlers.get(Symbol.for(SocketHandler.IDPrefix + 0));
+            return this.socketHandlers.get(Symbol.for(SocketHandler.IDPrefix + SocketHandler.COUNTER_START));
         } else {
             return null;
         }
     }
 
-    protected constructor(HttpServer, id: string | number, socketConfig: SocketIOStatic.ServerOptions, namespace: string = "/") {
+    protected constructor(HttpServer, id: string, socketConfig: SocketIOStatic.ServerOptions, namespace: string = "/") {
         this._socketServer = require('socket.io')(HttpServer, socketConfig);
-        this._socketServer['instanceId'] = id;
+        this._socketServer.instanceId = id;
         this._socketServer.getInstanceId = function () {
             return this.instanceId;
         };
@@ -73,13 +74,13 @@ export class SocketHandler implements ISocketHandler {
         const namespaceHandler = new NamespaceHandler(namespace, namespaceServer, ...middlewares);
         if (SocketHandler._pendingMap[HandlerType.SOCKET].has(namespace)) {
             SocketHandler._pendingMap[HandlerType.SOCKET].get(namespace).forEach(item => {
-                namespaceHandler.registerEvent(HandlerType.SOCKET, item.event, item.callback, ...item.middlewares)
+                namespaceHandler.registerSocketEvent(item.event, item.callback, ...item.middlewares)
             });
             SocketHandler._pendingMap[HandlerType.SOCKET].delete(namespace);
         }
         if (SocketHandler._pendingMap[HandlerType.SERVER].has(namespace)) {
             SocketHandler._pendingMap[HandlerType.SERVER].get(namespace).forEach(item => {
-                namespaceHandler.registerEvent(HandlerType.SERVER, item.event, item.callback, ...item.middlewares)
+                namespaceHandler.registerServerEvent(item.event, item.callback, ...item.middlewares)
             });
             SocketHandler._pendingMap[HandlerType.SERVER].delete(namespace);
         }
@@ -136,14 +137,6 @@ export class SocketHandler implements ISocketHandler {
         this.registerEvent(HandlerType.SERVER, event, callback, middlewares as Array<ISocketMiddleware>, namespace);
     }
 
-    deregisterEvent(eventType: HandlerType, event: string);
-    deregisterEvent(eventType: HandlerType, event: string, functionToRemove: (...args) => void);
-    deregisterEvent(eventType: HandlerType, event: string, functionToRemove: (...args) => void, namespace: string);
-    deregisterEvent(eventType: HandlerType, event, functionToRemove: (...args) => void = null, namespace = "/") {
-        const handler = this.getNamespaceHandler(namespace);
-        if (handler)
-            handler.deregisterEvent(eventType, event, functionToRemove);
-    }
 
 
     deregisterSocketEvent(event: string);
@@ -152,7 +145,7 @@ export class SocketHandler implements ISocketHandler {
     deregisterSocketEvent(event, functionToRemove: (...args) => void = null, namespace = "/") {
         const handler = this.getNamespaceHandler(namespace);
         if (handler)
-            handler.deregisterEvent(HandlerType.SOCKET, event, functionToRemove);
+            handler.deregisterSocketEvent( event, functionToRemove);
     }
 
 
@@ -162,7 +155,7 @@ export class SocketHandler implements ISocketHandler {
     deregisterServerEvent(event, functionToRemove: (...args) => void = null, namespace = "/") {
         const handler = this.getNamespaceHandler(namespace);
         if (handler)
-            handler.deregisterEvent(HandlerType.SERVER, event, functionToRemove);
+            handler.deregisterServerEvent(event, functionToRemove);
     }
 
     getNamespace(namespace: string): SocketIOStatic.Namespace {
@@ -171,7 +164,7 @@ export class SocketHandler implements ISocketHandler {
             : null;
     }
 
-    getServer(): SocketIOStatic.Server {
+    getServer(): IOptimizedServerInstance {
         return this._socketServer;
     }
 
@@ -183,6 +176,6 @@ export class SocketHandler implements ISocketHandler {
 
 
 export type IOptimizedServerInstance = SocketIOStatic.Server & {
-    getInstanceId(): string | number;
-    instanceId: string | number;
+    getInstanceId(): string;
+    instanceId: string;
 };

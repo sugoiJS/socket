@@ -17,7 +17,7 @@ beforeAll(async () => {
 
     return await new Promise(resolve => {
         let connected = 0;
-        SocketHandler.getHandler().registerEvent(HandlerType.SOCKET, "connected", () => {
+        SocketHandler.getHandler().registerSocketEvent("connected", () => {
             if (++connected === SocketsAmount) {
                 resolve();
             }
@@ -50,7 +50,7 @@ describe('basic socket features', () => {
     });
 
     it('should have id', () => {
-        expect(ioServer.getInstanceId()).toBe("SUG_SOCKET_HANDLER_0");
+        expect(ioServer.getInstanceId()).toBe(SocketHandler.IDPrefix+SocketHandler.COUNTER_START);
         expect(SocketHandler.getHandler(ioServer.getInstanceId()).getServer()).toBe(ioServer);
     });
     it('check last connect', () => {
@@ -60,7 +60,7 @@ describe('basic socket features', () => {
     it('check last message', async () => {
         expect.assertions(2);
         const msg = {msg: "testing message"};
-        sockets[1].emit("message", 1);
+        sockets[1].emit("message", 1);// to cause unhandled exception
         sockets[1].emit("message", msg);
         sockets[1].emit("message", "");
         return new Promise(resolve => {
@@ -74,7 +74,7 @@ describe('basic socket features', () => {
 
     it('check last message - detached', async () => {
         expect.assertions(1);
-        SocketHandler.getHandler().deregisterSocketEvent("message");
+        SocketHandler.getHandler().deregisterSocketEvent("message",SocketService.getMessage);
         const msg = {msg: "testing message-2"};
         sockets[1].emit("message", msg);
         return new Promise(resolve => {
@@ -85,28 +85,28 @@ describe('basic socket features', () => {
         })
     });
 
-    // it('check last message - reattach + detached single', async () => {
-    //     expect.assertions(2);
-    //
-    //     return new Promise(resolve => {
-    //         SocketHandler.getHandler()
-    //             .registerSocketEvent("message", SocketService.getMessage);
-    //
-    //         const msg = {msg: "testing message-7"};
-    //         sockets[1].emit("message", msg);
-    //         setTimeout(() => {
-    //             expect(SocketService.lastMessage['msg']).toEqual(msg.msg);
-    //
-    //             SocketHandler.getHandler().deregisterSocketEvent("message", SocketService.getMessage);
-    //             sockets[1].emit("message", msg);
-    //             setTimeout(() => {
-    //                 expect(SocketService.lastMessage['msg']).not.toEqual(msg.msg);
-    //                 resolve();
-    //             }, 50)
-    //         }, 50);
-    //
-    //     })
-    // });
+    it('check last message - reattach + detached single', async () => {
+        expect.assertions(2);
+
+        return new Promise(resolve => {
+            SocketHandler.getHandler()
+                .registerSocketEvent("message", SocketService.getMessage);
+
+            let msg = {msg: "testing message-7"};
+            sockets[1].emit("message", msg);
+            setTimeout(() => {
+                expect(SocketService.lastMessage['msg']).toEqual(msg.msg);
+                const overrideMsg = {msg:"override"};
+                SocketHandler.getHandler().deregisterSocketEvent("message", SocketService.getMessage);
+                sockets[1].emit("message",overrideMsg );
+                setTimeout(() => {
+                    expect(SocketService.lastMessage['msg']).not.toEqual(overrideMsg);
+                    resolve();
+                }, 50)
+            }, 50);
+
+        })
+    });
 
     test('should disconnect', () => {
         expect.assertions(1);

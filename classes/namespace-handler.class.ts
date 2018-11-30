@@ -33,7 +33,28 @@ export class NamespaceHandler {
     }
 
 
-    registerEvent(eventType: HandlerType, event: string, callback: ISocketEvent, ...middlewares: Array<ISocketMiddleware>) {
+    public registerSocketEvent(event: string, callback: (...args) => void, ...middlewares: Array<ISocketMiddleware>): void {
+        this.registerEvent(HandlerType.SOCKET, event, callback, ...middlewares);
+    }
+
+    public registerServerEvent(event: string, callback: (...args) => void, ...middlewares: Array<ISocketMiddleware>): void {
+        this.registerEvent(HandlerType.SERVER, event, callback, ...middlewares);
+    }
+
+    /**
+     *
+     * @param {string} eventName
+     * @param {(...args) => void} functionToRemove - in case not passed, all the functions will remove
+     */
+    public deregisterSocketEvent(eventName: string, functionToRemove?: (...args) => void) {
+        this.deregisterEvent(HandlerType.SOCKET, eventName, functionToRemove)
+    }
+
+    public deregisterServerEvent(eventName: string, functionToRemove: (...args) => void) {
+        this.deregisterEvent(HandlerType.SERVER, eventName, functionToRemove)
+    }
+
+    public registerEvent(eventType: HandlerType, event: string, callback: ISocketEvent, ...middlewares: Array<ISocketMiddleware>) {
         const socketEvent = new SocketEvent(event, callback, ...middlewares);
         switch (eventType) {
             case HandlerType.SERVER:
@@ -46,15 +67,17 @@ export class NamespaceHandler {
     }
 
 
-    deregisterEvent(eventType: HandlerType, eventName: string, functionToRemove: (...args) => void) {
+    private deregisterEvent(eventType: HandlerType, eventName: string, functionToRemove: (...args) => void) {
         eventName = eventName.toLowerCase();
         switch (eventType) {
             case HandlerType.SOCKET:
                 this.events = this.events.filter(event => event.event.toLowerCase() !== eventName);
                 Object['values'](this.instance.connected).forEach((socket: SocketIOStatic.Socket) => {
-                    functionToRemove === null
-                        ? socket.removeAllListeners(eventName)
-                        : socket.removeListener(eventName, functionToRemove);
+                    if(!functionToRemove)
+                        socket.removeAllListeners(eventName);
+                    else {
+                        socket.removeListener(eventName, functionToRemove);
+                    }
                 });
                 break;
             case HandlerType.SERVER:
@@ -64,10 +87,6 @@ export class NamespaceHandler {
                     : this.instance.removeListener(eventName, functionToRemove);
                 break;
         }
-    }
-
-    public addServerEventHandler(event: string, callback: (...args) => void, ...middlewares: Array<ISocketMiddleware>): void {
-        this.registerEvent(HandlerType.SERVER, event, callback, ...middlewares);
     }
 
 
