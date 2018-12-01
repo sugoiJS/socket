@@ -67,7 +67,7 @@ You can use as many decorators as you want.
 
 ### Get instance
 
-For getting the socketIO server instance, use the getSocketServerByNamespace socketService class method.
+For getting the socketIO server instance, use the getServer() method of the SocketHandler instance method.
 
     const io:SocketIOStatic.Server = SocketHandler.getHandler().getServer();
 

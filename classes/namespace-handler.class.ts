@@ -24,10 +24,10 @@ export class NamespaceHandler {
         this.middlewares.unshift(socketCookieParser);
         this.middlewares.forEach(middleware => instance.use(middleware));
 
-        this.serverEvents.forEach(serverEvent => this.addHandlerByType(HandlerType.SERVER, serverEvent.event, serverEvent.callback))
+        this.serverEvents.forEach(serverEvent => this.addHandlerByType(HandlerType.SERVER, serverEvent))
         instance.on(SocketServerEvents.CONNECTION, (socket) => {
             this.events.forEach(event => {
-                socket.on(event.event, data => event.callback(socket, data));
+                socket.on(event.event, event.extendCallback(data => event.callback(socket, data)));
             });
         });
     }
@@ -63,7 +63,7 @@ export class NamespaceHandler {
             case HandlerType.SOCKET:
                 this.events.push(socketEvent);
         }
-        this.addHandlerByType(eventType, event, socketEvent.callback)
+        this.addHandlerByType(eventType, socketEvent)
     }
 
 
@@ -82,21 +82,23 @@ export class NamespaceHandler {
                 break;
             case HandlerType.SERVER:
                 this.serverEvents = this.serverEvents.filter(event => event.event.toLowerCase() !== eventName);
-                functionToRemove === null
-                    ? this.instance.removeAllListeners(eventName)
-                    : this.instance.removeListener(eventName, functionToRemove);
+                if(!functionToRemove) {
+                    this.instance.removeAllListeners(eventName)
+                }else {
+                    this.instance.removeListener(eventName, functionToRemove);
+                }
                 break;
         }
     }
 
 
-    private addHandlerByType(handlerType: HandlerType, event, callback): void {
+    private addHandlerByType(handlerType: HandlerType, event:SocketEvent): void {
         switch (handlerType) {
             case HandlerType.SOCKET:
-                this.setSocketHandlers(event, callback);
+                this.setSocketHandlers(event);
                 break;
             case HandlerType.SERVER:
-                this.setServerHandler(event, callback);
+                this.setServerHandler(event);
                 break;
             default:
                 break;
@@ -104,18 +106,17 @@ export class NamespaceHandler {
     }
 
 
-    private setSocketHandlers(event: string, callback: any) {
+    private setSocketHandlers(event:SocketEvent) {
         for (let socketId of Object.keys(this.instance.connected)) {
             const socket = this.instance.connected[socketId];
-            socket.on(event, (data) => callback(socket, data));
+            socket.on(event.event, event.extendCallback((data) => event.callback(socket, data)));
         }
 
     }
 
 
-    private setServerHandler(event: string,
-                             callback: any): void {
-        this.instance.on(event, (data) => callback(data, this.instance));
+    private setServerHandler(event:SocketEvent): void {
+        this.instance.on(event.event, event.extendCallback((data) => event.callback(data, this.instance)));
     }
 
 }
