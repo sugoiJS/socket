@@ -1,16 +1,3 @@
-/**
- * Register event callback per namespace
- * @example
- *  @SocketOn('log')
- *  logging(data,socket){
- *      console.log(data);
- *      socket.emit("logged",data);
- *  }
- * @param {string} event
- * @param {string} namespace
- * @returns {(target, propertyKey: string, descriptor: PropertyDescriptor) => any}
- */
-
 import {HandlerType, SocketHandler} from "../services/socket-handler.adapter";
 import {ISocketMiddleware} from "../interfaces/socket-middleware.interface";
 

@@ -2,11 +2,12 @@
   "name": "@sugoi/socket",
   "version": "3.1.2",
   "description": "sugoi framework socket handler, based on socket.io",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "index.js",
+  "types": "index.d.ts",
   "scripts": {
     "docs": "..\\node_modules\\.bin\\typedoc --out ..\\dist\\docs\\sockets --json dist\\docs\\main.json --ignoreCompilerErrors --excludeNotExported --excludeProtected --excludePrivate --readme .\\README.md --mode file --hideGenerator --gitRevision '1.0.0' --externalPattern node_modules/**/* --excludeExternals",
     "test": "jest --config=jest.config.js --coverage --detectOpenHandles",
+    "coverage": "jest --coverage --coverageReporters=text-lcov  --detectOpenHandles | curl -s https://codecov.io/bash | bash",
     "build:publish": "npm run build && npm test",
     "update:patch": "npm version patch && npm publish && npm run docs",
     "update:minor": "npm version minor && npm publish && npm run docs",
@@ -14,7 +15,7 @@
     "build": "rmdir /S dist && tsc"
   },
   "files": [
-    "dist/**/*"
+    "./**/*"
   ],
   "keywords": [
     "socket.io",
@@ -53,6 +54,6 @@
   },
   "jest": {
     "collectCoverage": true,
-    "coverageDirectory": "./dist/coverage"
+    "coverageDirectory": "./coverage"
   }
 }

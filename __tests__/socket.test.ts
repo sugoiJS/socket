@@ -1,18 +1,14 @@
-import * as http from "http";
 import {SocketService} from "./services/socket.service";
 import {SocketHandler} from "../index";
 
 const io = require('socket.io-client');
 const SocketsAmount = 2;
+const port = 3000;
 let sockets = [];
-let httpServer;
-let httpServerAddr;
 let ioServer;
 
 beforeAll(async () => {
-    httpServer = http.createServer().listen();
-    httpServerAddr = httpServer.address();
-    ioServer = SocketHandler.init(httpServer);
+    ioServer = SocketHandler.init(port);
 
 
     return await new Promise(resolve => {
@@ -23,7 +19,7 @@ beforeAll(async () => {
             }
         });
         for (let i = 0; i < SocketsAmount; i++) {
-            const socket = io.connect(`http://[${httpServerAddr.address}]:${httpServerAddr.port}`,
+            const socket = io.connect(`http://127.0.0.1:${port}`,
                 {
                     'reconnection delay': 0,
                     'reopen delay': 0,
@@ -37,7 +33,7 @@ beforeAll(async () => {
 });
 
 afterAll(() => {
-    httpServer.close();
+    ioServer.close();
     sockets.forEach((socket) => {
         if (socket.connected)
             socket.disconnect()
@@ -60,11 +56,11 @@ describe('basic socket features', () => {
 
     it('check last message', async () => {
         expect.assertions(2);
-        const msg = {msg: "testing message"};
-        sockets[1].emit("message", 1);// to cause unhandled exception
-        sockets[1].emit("message", msg);
-        sockets[1].emit("message", "");
         return new Promise(resolve => {
+            const msg = {msg: "testing message"};
+            sockets[1].emit("message", 1);// to cause unhandled exception
+            sockets[1].emit("message", msg);
+            sockets[1].emit("message", "");
             setTimeout(() => {
                 expect(SocketService.lastMessage['msg']).toEqual(msg.msg);
                 expect(SocketService.lastMessage['timestamp']).toBeDefined();
@@ -76,9 +72,9 @@ describe('basic socket features', () => {
     it('check last message - detached', async () => {
         expect.assertions(1);
         SocketHandler.getHandler().deregisterSocketEvent("message", SocketService.getMessage);
-        const msg = {msg: "testing message-2"};
-        sockets[1].emit("message", msg);
         return new Promise(resolve => {
+            const msg = {msg: "testing message-2"};
+            sockets[1].emit("message", msg);
             setTimeout(() => {
                 expect(SocketService.lastMessage['msg']).not.toEqual(msg.msg);
                 resolve();
