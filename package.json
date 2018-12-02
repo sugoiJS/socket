@@ -2,8 +2,8 @@
   "name": "@sugoi/socket",
   "version": "3.1.3",
   "description": "sugoi framework socket handler, based on socket.io",
-  "main": "index.js",
-  "types": "index.d.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "docs": "..\\node_modules\\.bin\\typedoc --out ..\\dist\\docs\\sockets --json dist\\docs\\main.json --ignoreCompilerErrors --excludeNotExported --excludeProtected --excludePrivate --readme .\\README.md --mode file --hideGenerator --gitRevision '1.0.0' --externalPattern node_modules/**/* --excludeExternals",
     "test": "jest --config=jest.config.js --coverage --detectOpenHandles",
@@ -12,10 +12,10 @@
     "update:patch": "npm version patch && npm publish && npm run docs",
     "update:minor": "npm version minor && npm publish && npm run docs",
     "update:major": "npm version major && npm publish && npm run docs",
-    "build": "rimraf dist && tsc"
+    "build": "rmdir /S dist && tsc"
   },
   "files": [
-    "./**/*"
+    "dist/**/*"
   ],
   "keywords": [
     "socket.io",
@@ -49,12 +49,11 @@
   "devDependencies": {
     "@types/jest": "^23.3.9",
     "jest": "^23.6.0",
-    "rimraf": "^2.6.2",
     "socket.io-client": "^2.1.1",
     "ts-jest": "^23.10.5"
   },
   "jest": {
     "collectCoverage": true,
-    "coverageDirectory": "./coverage"
+    "coverageDirectory": "./dist/coverage"
   }
 }
