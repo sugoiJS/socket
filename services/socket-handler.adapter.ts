@@ -3,6 +3,7 @@ import {ISocketHandler} from "../interfaces/socket-handler.interface";
 import {NamespaceHandler} from "../classes/namespace-handler.class";
 import {ISocketMiddleware} from "../interfaces/socket-middleware.interface";
 import {ISocketServerMiddleware} from "../interfaces/socket-server-middleware.interface";
+import {IExtendedSocket} from "../interfaces/extended-socket.interface";
 
 export enum HandlerType {
     SERVER = "SERVER",
@@ -89,9 +90,9 @@ export class SocketHandler implements ISocketHandler {
     }
 
 
-    static RegisterEvent<T>(handlerType: HandlerType, event: string, callback: (socket: SocketIOStatic.Socket, data: T) => void, namespace: string);
-    static RegisterEvent<T>(handlerType: HandlerType, event: string, callback: (socket: SocketIOStatic.Socket, data: T) => void, middlewares: Array<ISocketMiddleware>);
-    static RegisterEvent<T>(handlerType: HandlerType, event: string, callback: (socket: SocketIOStatic.Socket, data: T) => void, middlewares: Array<ISocketMiddleware>, namespace: string);
+    static RegisterEvent<T>(handlerType: HandlerType, event: string, callback: (socket: IExtendedSocket, data: T) => void, namespace: string);
+    static RegisterEvent<T>(handlerType: HandlerType, event: string, callback: (socket: IExtendedSocket, data: T) => void, middlewares: Array<ISocketMiddleware>);
+    static RegisterEvent<T>(handlerType: HandlerType, event: string, callback: (socket: IExtendedSocket, data: T) => void, middlewares: Array<ISocketMiddleware>, namespace: string);
     static RegisterEvent<T=any>(handlerType: HandlerType, event, callback, middlewares?: Array<any> | string, namespace: string = "/") {
         if (typeof middlewares === "string") {
             namespace = middlewares as string;
@@ -103,10 +104,10 @@ export class SocketHandler implements ISocketHandler {
     };
 
 
-    registerEvent<T>(handlerType: HandlerType, event: string, callback: (socket: SocketIOStatic.Socket, data: T) => void);
-    registerEvent<T>(handlerType: HandlerType, event: string, callback: (socket: SocketIOStatic.Socket, data: T) => void, namespace: string);
-    registerEvent<T>(handlerType: HandlerType, event: string, callback: (socket: SocketIOStatic.Socket, data: T) => void, middlewares: Array<ISocketMiddleware>);
-    registerEvent<T>(handlerType: HandlerType, event: string, callback: (socket: SocketIOStatic.Socket, data: T) => void, middlewares: Array<ISocketMiddleware>, namespace: string);
+    registerEvent<T>(handlerType: HandlerType, event: string, callback: (socket: IExtendedSocket, data: T) => void);
+    registerEvent<T>(handlerType: HandlerType, event: string, callback: (socket: IExtendedSocket, data: T) => void, namespace: string);
+    registerEvent<T>(handlerType: HandlerType, event: string, callback: (socket: IExtendedSocket, data: T) => void, middlewares: Array<ISocketMiddleware>);
+    registerEvent<T>(handlerType: HandlerType, event: string, callback: (socket: IExtendedSocket, data: T) => void, middlewares: Array<ISocketMiddleware>, namespace: string);
     registerEvent<T=any>(handlerType: HandlerType, event, callback, middlewares: Array<any> | string = [], namespace: string = null) {
         if (typeof middlewares === "string") {
             namespace = middlewares as string;
@@ -121,19 +122,19 @@ export class SocketHandler implements ISocketHandler {
             handler.registerEvent(handlerType, event, callback, ...middlewares);
     }
 
-    registerSocketEvent<T>(event: string, callback: (socket: SocketIOStatic.Socket, data: T) => void);
-    registerSocketEvent<T>(event: string, callback: (socket: SocketIOStatic.Socket, data: T) => void, namespace: string);
-    registerSocketEvent<T>(event: string, callback: (socket: SocketIOStatic.Socket, data: T) => void, middlewares: Array<ISocketMiddleware>);
-    registerSocketEvent<T>(event: string, callback: (socket: SocketIOStatic.Socket, data: T) => void, middlewares: Array<ISocketMiddleware>, namespace: string);
-    registerSocketEvent<T=any>(event: string, callback: (socket: SocketIOStatic.Socket, data: T) => void, middlewares?: Array<ISocketMiddleware> | string, namespace: string = "/") {
+    registerSocketEvent<T>(event: string, callback: (socket: IExtendedSocket, data: T) => void);
+    registerSocketEvent<T>(event: string, callback: (socket: IExtendedSocket, data: T) => void, namespace: string);
+    registerSocketEvent<T>(event: string, callback: (socket: IExtendedSocket, data: T) => void, middlewares: Array<ISocketMiddleware>);
+    registerSocketEvent<T>(event: string, callback: (socket: IExtendedSocket, data: T) => void, middlewares: Array<ISocketMiddleware>, namespace: string);
+    registerSocketEvent<T=any>(event: string, callback: (socket: IExtendedSocket, data: T) => void, middlewares?: Array<ISocketMiddleware> | string, namespace: string = "/") {
         this.registerEvent(HandlerType.SOCKET, event, callback, middlewares as Array<ISocketMiddleware>, namespace);
     }
 
-    registerServerEvent<T>(event: string, callback: (socket: SocketIOStatic.Socket, data: T) => void);
-    registerServerEvent<T>(event: string, callback: (socket: SocketIOStatic.Socket, data: T) => void, namespace: string);
-    registerServerEvent<T>(event: string, callback: (socket: SocketIOStatic.Socket, data: T) => void, middlewares: Array<ISocketMiddleware>);
-    registerServerEvent<T>(event: string, callback: (socket: SocketIOStatic.Socket, data: T) => void, middlewares: Array<ISocketMiddleware>, namespace: string);
-    registerServerEvent<T=any>(event: string, callback: (socket: SocketIOStatic.Socket, data: T) => void, middlewares?: Array<ISocketMiddleware> | string, namespace: string = "/") {
+    registerServerEvent<T>(event: string, callback: (socket: IExtendedSocket, data: T) => void);
+    registerServerEvent<T>(event: string, callback: (socket: IExtendedSocket, data: T) => void, namespace: string);
+    registerServerEvent<T>(event: string, callback: (socket: IExtendedSocket, data: T) => void, middlewares: Array<ISocketMiddleware>);
+    registerServerEvent<T>(event: string, callback: (socket: IExtendedSocket, data: T) => void, middlewares: Array<ISocketMiddleware>, namespace: string);
+    registerServerEvent<T=any>(event: string, callback: (socket: IExtendedSocket, data: T) => void, middlewares?: Array<ISocketMiddleware> | string, namespace: string = "/") {
         this.registerEvent(HandlerType.SERVER, event, callback, middlewares as Array<ISocketMiddleware>, namespace);
     }
 

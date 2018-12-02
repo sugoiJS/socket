@@ -26,10 +26,22 @@ export class NamespaceHandler {
 
         this.serverEvents.forEach(serverEvent => this.addHandlerByType(HandlerType.SERVER, serverEvent))
         instance.on(SocketServerEvents.CONNECTION, (socket) => {
+            this.extendSocketObject(socket);
             this.events.forEach(event => {
                 socket.on(event.event, event.extendCallback(data => event.callback(socket, data)));
             });
         });
+    }
+
+    private extendSocketObject(socket){
+        socket._namespaceInstance = this.instance;
+        socket._serverInstance = this.instance.server;
+        socket.getSocketServer = function(){
+            return this['_serverInstance'];
+        };
+        socket.getSocketNamespace = function(){
+            return this['_namespaceInstance'];
+        };
     }
 
 

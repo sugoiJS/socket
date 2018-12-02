@@ -1,6 +1,6 @@
 import * as http from "http";
 import {SocketService} from "./services/socket.service";
-import {HandlerType, SocketHandler} from "../index";
+import {SocketHandler} from "../index";
 
 const io = require('socket.io-client');
 const SocketsAmount = 2;
@@ -50,9 +50,10 @@ describe('basic socket features', () => {
     });
 
     it('should have id', () => {
-        expect(ioServer.getInstanceId()).toBe(SocketHandler.IDPrefix+SocketHandler.COUNTER_START);
+        expect(ioServer.getInstanceId()).toBe(SocketHandler.IDPrefix + SocketHandler.COUNTER_START);
         expect(SocketHandler.getHandler(ioServer.getInstanceId()).getServer()).toBe(ioServer);
     });
+
     it('check last connect', () => {
         expect(SocketService.lastConnected).toEqual(sockets[1].id);
     });
@@ -74,7 +75,7 @@ describe('basic socket features', () => {
 
     it('check last message - detached', async () => {
         expect.assertions(1);
-        SocketHandler.getHandler().deregisterSocketEvent("message",SocketService.getMessage);
+        SocketHandler.getHandler().deregisterSocketEvent("message", SocketService.getMessage);
         const msg = {msg: "testing message-2"};
         sockets[1].emit("message", msg);
         return new Promise(resolve => {
@@ -96,9 +97,9 @@ describe('basic socket features', () => {
             sockets[1].emit("message", msg);
             setTimeout(() => {
                 expect(SocketService.lastMessage['msg']).toEqual(msg.msg);
-                const overrideMsg = {msg:"override"};
+                const overrideMsg = {msg: "override"};
                 SocketHandler.getHandler().deregisterSocketEvent("message", SocketService.getMessage);
-                sockets[1].emit("message",overrideMsg );
+                sockets[1].emit("message", overrideMsg);
                 setTimeout(() => {
                     expect(SocketService.lastMessage['msg']).not.toEqual(overrideMsg);
                     resolve();
@@ -108,7 +109,19 @@ describe('basic socket features', () => {
         })
     });
 
-    test('should disconnect', () => {
+    it('check socket namespace & server', async () => {
+        expect.assertions(2);
+        return new Promise(resolve => {
+            SocketHandler.getHandler().registerSocketEvent("test", ((socket) => {
+                expect(socket.getSocketServer()).toBe(ioServer);
+                expect(socket.getSocketNamespace()).toBe(SocketHandler.getHandler().getNamespace("/"));
+                resolve();
+            }));
+            sockets[1].emit("test")
+        });
+    });
+
+    it('should disconnect', () => {
         expect.assertions(1);
         sockets[0].disconnect();
         return new Promise(resolve => {
