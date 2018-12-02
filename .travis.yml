@@ -10,6 +10,7 @@ before_install:
   - npm i -g npm@latest
 install:
   - npm ci
+  - npm i -D tsc
   - npm i -D rimraf
   - npm run build
 script:
