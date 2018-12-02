@@ -1,36 +1,59 @@
 {
   "name": "@sugoi/socket",
-  "version": "1.2.0",
+  "version": "3.1.3",
   "description": "sugoi framework socket handler, based on socket.io",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "index.js",
+  "types": "index.d.ts",
   "scripts": {
-    "test": "echo test not found",
     "docs": "..\\node_modules\\.bin\\typedoc --out ..\\dist\\docs\\sockets --json dist\\docs\\main.json --ignoreCompilerErrors --excludeNotExported --excludeProtected --excludePrivate --readme .\\README.md --mode file --hideGenerator --gitRevision '1.0.0' --externalPattern node_modules/**/* --excludeExternals",
-    "update:patch": " npm run build && npm version patch && npm publish && npm run docs",
-    "update:minor": " npm run build && npm version minor && npm publish && npm run docs",
-    "update:major": " npm run build && npm version major && npm publish && npm run docs",
+    "test": "jest --config=jest.config.js --coverage --detectOpenHandles",
+    "coverage": "jest --coverage --coverageReporters=text-lcov  --detectOpenHandles | curl -s https://codecov.io/bash | bash",
+    "build:publish": "npm run build && npm test",
+    "update:patch": "npm version patch && npm publish && npm run docs",
+    "update:minor": "npm version minor && npm publish && npm run docs",
+    "update:major": "npm version major && npm publish && npm run docs",
     "build": "rmdir /S dist && tsc"
   },
   "files": [
-    "dist/**/*"
+    "./**/*"
   ],
   "keywords": [
     "socket.io",
     "decorators",
     "annotations",
-    "framework"
+    "framework",
+    "module",
+    "@sugoi",
+    "sugoi",
+    "@sugoijs",
+    "sugoijs"
   ],
+  "homepage": "sugoijs.com",
+  "bugs": {
+    "url": "https://github.com/sugoiJS/socket/issues",
+    "email": "oba.sugoi@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sugoiJS/socket"
+  },
   "author": "Orel Balilti",
   "license": "MIT",
   "dependencies": {
+    "@sugoi/core": "3.1.2",
+    "@types/socket.io": "^2.1.0",
+    "@types/socket.io-client": "^1.4.32",
     "socket.io": "^2.0.4",
-    "socket.io-cookie": "0.0.1",
-    "@sugoi/core": "1.0.0"
+    "socket.io-cookie": "0.0.1"
   },
   "devDependencies": {
-    "@types/socket.io": "^1.4.33",
-    "@types/socket.io-client": "^1.4.32",
-    "typescript": "^2.7.2"
+    "@types/jest": "^23.3.9",
+    "jest": "^23.6.0",
+    "socket.io-client": "^2.1.1",
+    "ts-jest": "^23.10.5"
+  },
+  "jest": {
+    "collectCoverage": true,
+    "coverageDirectory": "./coverage"
   }
 }

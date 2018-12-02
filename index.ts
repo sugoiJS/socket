@@ -1,7 +1,18 @@
-export {socketOn} from "./decorators/socket";
+export * from "./utils/socket.utils";
 
-export {ISocketHandler} from "./interfaces/socket-handler.interface";
+export {ISocketServerMiddleware} from "./interfaces/socket-server-middleware.interface";
 
-export {socketService} from "./services/socket.service";
+export {SocketHandler} from "./services/socket-handler.adapter";
 
-import "rxjs";
+export {SocketServerEvents} from "./constants/socket-server-events.constant";
+
+export {SocketServerOnByHandler,SocketOnByHandler,SocketOn, SocketServerOn} from "./decorators/socket";
+
+export {HandlerType} from "./services/socket-handler.adapter";
+
+
+import * as SocketIOStatic from "socket.io";
+import * as socketCookieParser from "socket.io-cookie";
+
+export {SocketIOStatic};
+export {socketCookieParser};
