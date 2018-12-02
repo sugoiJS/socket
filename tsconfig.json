@@ -1,10 +1,9 @@
 {
   "extends": "../tsconfig.json",
   "compilerOptions": {
+//        "inlineSourceMap": true,
     "outDir": "./dist"                        /* Redirect output structure to the directory. */
   },
-  "typeRoots": [
-    "./node_modules/@types"
-  ]
+  "types":["@types","index.d"]
 
 }
