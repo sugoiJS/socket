@@ -3,8 +3,8 @@ import {EXCEPTIONS} from "../constants/exceptions.constant";
 
 export class SocketEvent {
     event: string;
-    callback: any;
 
+    callback: any;
     constructor(event, callback: (socket: SocketIOStatic.Socket, ...args: any[]) => void, ...middlewares) {
         this.event = event;
         const newCallback = (socket, ...data) => {
@@ -24,21 +24,26 @@ export class SocketEvent {
             next();
         };
         middlewares.unshift(callback);
-        this.callback = SocketEvent.getNamedCallback(newCallback,callback);
-    }
-    extendCallback(extendFunction:(...args)=>void){
-        const name = this.callback.name;
-        return SocketEvent.getNamedCallback(extendFunction,this.callback["listener"]);
+        this.callback = SocketEvent.GetWrappedFunction(newCallback, callback);
     }
 
-    static getNamedCallback(callback,originalFunction){
-        return new Proxy(callback, {
+    extendCallback(extendFunction: (...args) => void) {
+        return SocketEvent.GetWrappedFunction(extendFunction, this.callback["listener"]);
+    }
+
+    static GetWrappedFunction(callback, originalFunction) {
+        return new Proxy(callback, this.GetProxyHandler(originalFunction))
+    }
+
+    public static GetProxyHandler(originalFunction){
+        return {
             get: (target, property, receiver) => {
                 if (property === "listener")
                     return originalFunction;
-                return Reflect.get(target, property, receiver);
+                else
+                    return Reflect.get(target, property, receiver);
             }
-        })
-    }
+        }
+    };
 
 }

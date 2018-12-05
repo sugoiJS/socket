@@ -26,6 +26,9 @@ export class SocketHandler implements ISocketHandler {
     private _socketServer: IOptimizedServerInstance;
 
 
+    public static init(port: number): SocketIOStatic.Server
+    public static init(port: number, socketConfig: SocketIOStatic.ServerOptions): SocketIOStatic.Server
+    public static init(port: number, socketConfig: SocketIOStatic.ServerOptions, namespace: string): SocketIOStatic.Server
     public static init(HttpServer: any): SocketIOStatic.Server
     public static init(HttpServer: any, socketConfig: SocketIOStatic.ServerOptions): SocketIOStatic.Server
     public static init(HttpServer: any, socketConfig: SocketIOStatic.ServerOptions, namespace: string): SocketIOStatic.Server

@@ -61,6 +61,7 @@ describe('basic socket features', () => {
             sockets[1].emit("message", 1);// to cause unhandled exception
             sockets[1].emit("message", msg);
             sockets[1].emit("message", "");
+            sockets[1].emit("message", {msg:null});
             setTimeout(() => {
                 expect(SocketService.lastMessage['msg']).toEqual(msg.msg);
                 expect(SocketService.lastMessage['timestamp']).toBeDefined();

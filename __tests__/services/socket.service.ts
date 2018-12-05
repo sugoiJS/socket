@@ -8,7 +8,8 @@ import {
 } from "../../index";
 import SocketIOStatic = require("socket.io");
 import {SocketHandler} from "../../services/socket-handler.adapter";
-import {Injectable} from "@sugoi/core";
+import {Injectable, ComparableSchema, SchemaTypes} from "@sugoi/core";
+import {SocketSchemaPolicy} from "../../decorators/schema-policy.decorator";
 
 const instanceId = SocketHandler.IDPrefix + SocketHandler.COUNTER_START;
 
@@ -26,12 +27,14 @@ export class SocketService {
         console.log("disconnection, amount: %s", SocketService.connectedAmount);
     }
 
+
     @SocketOnByHandler("message", "/", instanceId, ((socket, data: any) => {
         if (!data) {
             BreakMiddleware()
         }
         data.timestamp = new Date();
     }))
+    @SocketSchemaPolicy({msg:ComparableSchema.ofType(SchemaTypes.STRING).setMandatory(true)})
     static getMessage(socket, data) {
         this.lastMessage = data;
     }

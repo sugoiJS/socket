@@ -1,4 +1,7 @@
+
 export * from "./utils/socket.utils";
+
+export {SocketSchemaPolicy} from "./decorators/schema-policy.decorator";
 
 export {ISocketServerMiddleware} from "./interfaces/socket-server-middleware.interface";
 
@@ -16,3 +19,5 @@ import * as socketCookieParser from "socket.io-cookie";
 
 export {SocketIOStatic};
 export {socketCookieParser};
+
+
