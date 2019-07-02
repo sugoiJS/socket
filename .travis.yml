@@ -1,18 +1,18 @@
 language: node_js
 node_js:
-    - "8"
-    - "9"
-    - "10"
+  - "8"
+  - "9"
+  - "10"
+  - "11"
+  - "12"
 cache:
-    directories:
-        - "node_modules"
+  directories:
+    - "node_modules"
 before_install:
   - npm i -g npm@latest
+  - npm i -g typescript
 install:
   - npm ci
-  - npm i -D tsc
-  - npm i -D rimraf
-  - npm run build
 script:
-  - npm test
+  - npm run build:publish
 after_success: npm run coverage
