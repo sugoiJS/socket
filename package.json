@@ -12,7 +12,7 @@
     "update:patch": "npm version patch && npm publish && npm run docs",
     "update:minor": "npm version minor && npm publish && npm run docs",
     "update:major": "npm version major && npm publish && npm run docs",
-    "build": "rmdir /S dist && tsc"
+    "build": "rimraf dist && tsc"
   },
   "files": [
     "dist/**/*"
@@ -50,7 +50,8 @@
     "@types/jest": "^23.3.9",
     "jest": "^23.6.0",
     "socket.io-client": "^2.1.1",
-    "ts-jest": "^23.10.5"
+    "ts-jest": "^23.10.5",
+    "rimraf": "^2.6.3"
   },
   "jest": {
     "collectCoverage": true,
