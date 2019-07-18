@@ -13,7 +13,8 @@ export class SocketEvent {
                 while (clonedMiddlewares.length > 0) {
                     const next = clonedMiddlewares.pop();
                     try {
-                        await next.call(callback, socket, ...data);
+                        const returnedData = await next.call(callback, socket, ...data); 
+                        data = returnedData === undefined ? data : [returnedData];
                     } catch (err) {
                         if (err && !(err.message === EXCEPTIONS.BREAK_MIDDLEWARE.message && err.code === EXCEPTIONS.BREAK_MIDDLEWARE.code))
                             console.error("Socket callback stopped because of an unhandled error. %s", err.stack);
