@@ -50,6 +50,10 @@ describe('basic socket features', () => {
         expect(SocketHandler.getHandler(ioServer.getInstanceId()).getServer()).toBe(ioServer);
     });
 
+    it('shouldn\'t re-initiate', () => {
+        expect(SocketHandler.getHandler(ioServer.getInstanceId()).getServer()).toBe(SocketHandler.init(port));
+    });
+
     it('check last connect', () => {
         expect(SocketService.lastConnected).toEqual(sockets[1].id);
     });

@@ -17,6 +17,7 @@ export class SocketHandler implements ISocketHandler {
     private static counter = SocketHandler.COUNTER_START;
 
     protected static socketHandlers: Map<Symbol, SocketHandler> = new Map();
+    protected static _handlersIds: Map<Symbol, string> = new Map();
     protected static _pendingMap: { [prop: string]: Map<string, Array<any>> } = {
         [HandlerType.SERVER]: new Map(),
         [HandlerType.SOCKET]: new Map()
@@ -35,14 +36,18 @@ export class SocketHandler implements ISocketHandler {
     public static init(HttpServer: any,
                        socketConfig: SocketIOStatic.ServerOptions = {},
                        namespace: string = "/"): SocketIOStatic.Server {
-        const id = SocketHandler.IDPrefix + this.counter++;
+        const serverSymbol = Symbol.for(HttpServer);
+        const id = SocketHandler._handlersIds.has(serverSymbol)
+        ? SocketHandler._handlersIds.get(serverSymbol)
+        : SocketHandler.IDPrefix + this.counter++;
         let socketHandler;
         if (this.socketHandlers.has(Symbol.for(id))) {
-            socketHandler = this.socketHandlers.has(Symbol.for(id));
+            socketHandler = this.socketHandlers.get(Symbol.for(id));
             socketHandler.addNamespace(namespace);
         } else {
             socketHandler = new this(HttpServer, id, socketConfig, namespace);
             this.socketHandlers.set(Symbol.for(id), socketHandler);
+            SocketHandler._handlersIds.set(serverSymbol, id);
         }
         return socketHandler.getServer();
     }
