@@ -21,7 +21,7 @@ export class NamespaceHandler {
         this.instance = instance;
         this.status = instance.connected ? CONNECTION_STATUS.CONNECTED : CONNECTION_STATUS.DISCONNECTED;
         this.middlewares = middlewares;
-        this.middlewares.unshift(socketCookieParser);
+        // this.middlewares.unshift(socketCookieParser);
         this.middlewares.forEach(middleware => instance.use(middleware));
 
         this.serverEvents.forEach(serverEvent => this.addHandlerByType(HandlerType.SERVER, serverEvent))
