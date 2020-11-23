@@ -11,7 +11,7 @@ beforeAll(async () => {
     ioServer = SocketHandler.init(port);
 
 
-    return await new Promise(resolve => {
+    return await new Promise<void>(resolve => {
         let connected = 0;
         SocketHandler.getHandler().registerSocketEvent("connected", () => {
             if (++connected === SocketsAmount) {
@@ -60,7 +60,7 @@ describe('basic socket features', () => {
 
     it('check last message', async () => {
         expect.assertions(2);
-        return new Promise(resolve => {
+        return new Promise<void>(resolve => {
             const msg = {msg: "testing message"};
             sockets[1].emit("message", 1);// to cause unhandled exception
             sockets[1].emit("message", msg);
@@ -77,7 +77,7 @@ describe('basic socket features', () => {
     it('check last message - detached', async () => {
         expect.assertions(1);
         SocketHandler.getHandler().deregisterSocketEvent("message", SocketService.getMessage);
-        return new Promise(resolve => {
+        return new Promise<void>(resolve => {
             const msg = {msg: "testing message-2"};
             sockets[1].emit("message", msg);
             setTimeout(() => {
@@ -90,7 +90,7 @@ describe('basic socket features', () => {
     it('check last message - reattach + detached single', async () => {
         expect.assertions(2);
 
-        return new Promise(resolve => {
+        return new Promise<void>(resolve => {
             SocketHandler.getHandler()
                 .registerSocketEvent("message", SocketService.getMessage);
 
@@ -112,7 +112,7 @@ describe('basic socket features', () => {
 
     it('check socket namespace & server', async () => {
         expect.assertions(2);
-        return new Promise(resolve => {
+        return new Promise<void>(resolve => {
             SocketHandler.getHandler().registerSocketEvent("test", ((socket) => {
                 expect(socket.getSocketServer()).toBe(ioServer);
                 expect(socket.getSocketNamespace()).toBe(SocketHandler.getHandler().getNamespace("/"));
@@ -125,7 +125,7 @@ describe('basic socket features', () => {
     it('should disconnect', () => {
         expect.assertions(1);
         sockets[0].disconnect();
-        return new Promise(resolve => {
+        return new Promise<void>(resolve => {
             setTimeout(() => {
                 expect(SocketService.connectedAmount).toEqual(SocketsAmount - 1);
                 resolve();
@@ -139,7 +139,7 @@ describe("dynamic events", () => {
     it('add handler for socket', async () => {
         expect.assertions(1);
 
-        return new Promise(resolve => {
+        return new Promise<void>(resolve => {
 
             function greetingHandler(socket, data) {
                 console.log(data);
