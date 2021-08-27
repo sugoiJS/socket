@@ -48,6 +48,16 @@ describe('basic socket features', () => {
             expect(SocketService.connectedAmount).toEqual(SocketsAmount);
         });
 
+        it('should disconnect', () => {
+            expect.assertions(1);
+            sockets[0].disconnect();
+            return new Promise<void>(resolve => {
+                setTimeout(() => {
+                    expect(SocketService.connectedAmount).toEqual(SocketsAmount - 1);
+                    resolve();
+                }, 50)
+            })
+        });
         it('should have id', () => {
             expect(ioServer.getInstanceId()).toBe(SocketHandler.IDPrefix + SocketHandler.COUNTER_START);
             expect(SocketHandler.getHandler(ioServer.getInstanceId()).getServer()).toBe(ioServer);
@@ -129,16 +139,6 @@ describe('basic socket features', () => {
         });
     });
 
-    it('should disconnect', () => {
-        expect.assertions(1);
-        sockets[0].disconnect();
-        return new Promise<void>(resolve => {
-            setTimeout(() => {
-                expect(SocketService.connectedAmount).toEqual(SocketsAmount - 1);
-                resolve();
-            }, 50)
-        })
-    });
 
 });
 
