@@ -22,12 +22,13 @@
 
 
     "testMatch": [
-        "**/dist/__tests__/**/?(*.)+(spec|test).js?(x)",
-        "**/dist/__tests__/?(*.)+(spec|test).js?(x)",
-        "**/dist/?(*.)+(spec|test).js?(x)"
+        "**/__tests__/**/?(*.)+(spec|test).(j|t)s?(x)",
+        "**/__tests__/?(*.)+(spec|test).(j|t)s?(x)",
+        "**/?(*.)+(spec|test).(j|t)s?(x)"
     ],
 
     "testPathIgnorePatterns": [
-        "\\\\node_modules\\\\"
+        "/node_modules/",
+        "/dist/"
     ]
 }

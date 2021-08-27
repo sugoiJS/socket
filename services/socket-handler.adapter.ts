@@ -34,7 +34,7 @@ export class SocketHandler implements ISocketHandler {
     public static init(HttpServer: any, socketConfig: SocketIOStatic.ServerOptions): SocketIOStatic.Server
     public static init(HttpServer: any, socketConfig: SocketIOStatic.ServerOptions, namespace: string): SocketIOStatic.Server
     public static init(HttpServer: any,
-                       socketConfig: SocketIOStatic.ServerOptions = {},
+                       socketConfig: SocketIOStatic.ServerOptions = undefined,
                        namespace: string = "/"): SocketIOStatic.Server {
         const serverSymbol = Symbol.for(HttpServer);
         const id = SocketHandler._handlersIds.has(serverSymbol)

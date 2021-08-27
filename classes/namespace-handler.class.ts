@@ -19,7 +19,7 @@ export class NamespaceHandler {
     constructor(namespace: string, instance: SocketIOStatic.Namespace, ...middlewares: Array<ISocketServerMiddleware>) {
         this.namespace = namespace;
         this.instance = instance;
-        this.status = instance.connected ? CONNECTION_STATUS.CONNECTED : CONNECTION_STATUS.DISCONNECTED;
+        this.status = instance.sockets.size ? CONNECTION_STATUS.CONNECTED : CONNECTION_STATUS.DISCONNECTED;
         this.middlewares = middlewares;
         // this.middlewares.unshift(socketCookieParser);
         this.middlewares.forEach(middleware => instance.use(middleware));
@@ -84,7 +84,7 @@ export class NamespaceHandler {
         switch (eventType) {
             case HandlerType.SOCKET:
                 this.events = this.events.filter(event => event.event.toLowerCase() !== eventName);
-                Object['values'](this.instance.connected).forEach((socket: SocketIOStatic.Socket) => {
+                Array.from(this.instance.sockets.values()).forEach((socket: SocketIOStatic.Socket) => {
                     if(!functionToRemove)
                         socket.removeAllListeners(eventName);
                     else {
@@ -119,8 +119,7 @@ export class NamespaceHandler {
 
 
     private setSocketHandlers(event:SocketEvent) {
-        for (let socketId of Object.keys(this.instance.connected)) {
-            const socket = this.instance.connected[socketId];
+        for (let socket of this.instance.sockets.values()) {
             socket.on(event.event, event.extendCallback((data) => event.callback(socket, data)));
         }
 
