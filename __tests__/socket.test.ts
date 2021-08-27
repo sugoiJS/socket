@@ -6,7 +6,7 @@ const SocketsAmount = 2;
 const port = 3000;
 let sockets = [];
 let ioServer;
-
+    
 beforeAll(async () => {
     ioServer = SocketHandler.init(port);
 
@@ -40,76 +40,83 @@ afterAll(() => {
     });
 });
 
+
 describe('basic socket features', () => {
-    it('should connect', () => {
-        expect(SocketService.connectedAmount).toEqual(SocketsAmount);
-    });
 
-    it('should have id', () => {
-        expect(ioServer.getInstanceId()).toBe(SocketHandler.IDPrefix + SocketHandler.COUNTER_START);
-        expect(SocketHandler.getHandler(ioServer.getInstanceId()).getServer()).toBe(ioServer);
-    });
+    describe('socket connection', () => {
+        it('should connect', () => {
+            expect(SocketService.connectedAmount).toEqual(SocketsAmount);
+        });
 
-    it('shouldn\'t re-initiate', () => {
-        expect(SocketHandler.getHandler(ioServer.getInstanceId()).getServer()).toBe(SocketHandler.init(port));
-    });
+        it('should have id', () => {
+            expect(ioServer.getInstanceId()).toBe(SocketHandler.IDPrefix + SocketHandler.COUNTER_START);
+            expect(SocketHandler.getHandler(ioServer.getInstanceId()).getServer()).toBe(ioServer);
+        });
 
-    it('check last connect', () => {
-        expect(SocketService.lastConnected).toEqual(sockets[1].id);
-    });
+        it('shouldn\'t re-initiate', () => {
+            expect(SocketHandler.getHandler(ioServer.getInstanceId()).getServer()).toBe(SocketHandler.init(port));
+        });
 
-    it('check last message', async () => {
-        expect.assertions(2);
-        return new Promise<void>(resolve => {
-            const msg = {msg: "testing message"};
-            sockets[1].emit("message", 1);// to cause unhandled exception
-            sockets[1].emit("message", msg);
-            sockets[1].emit("message", "");
-            sockets[1].emit("message", {msg:null});
-            setTimeout(() => {
-                expect(SocketService.lastMessage['msg']).toEqual(msg.msg);
-                expect(SocketService.lastMessage['timestamp']).toBeDefined();
-                resolve();
-            }, 50)
-        })
-    });
+        it('check last connect', () => {
+            expect(SocketService.lastConnected).toEqual(sockets[1].id);
+        });
+    })
+    
+    describe('socket messaging', () => {
 
-    it('check last message - detached', async () => {
-        expect.assertions(1);
-        SocketHandler.getHandler().deregisterSocketEvent("message", SocketService.getMessage);
-        return new Promise<void>(resolve => {
-            const msg = {msg: "testing message-2"};
-            sockets[1].emit("message", msg);
-            setTimeout(() => {
-                expect(SocketService.lastMessage['msg']).not.toEqual(msg.msg);
-                resolve();
-            }, 50)
-        })
-    });
-
-    it('check last message - reattach + detached single', async () => {
-        expect.assertions(2);
-
-        return new Promise<void>(resolve => {
-            SocketHandler.getHandler()
-                .registerSocketEvent("message", SocketService.getMessage);
-
-            let msg = {msg: "testing message-7"};
-            sockets[1].emit("message", msg);
-            setTimeout(() => {
-                expect(SocketService.lastMessage['msg']).toEqual(msg.msg);
-                const overrideMsg = {msg: "override"};
-                SocketHandler.getHandler().deregisterSocketEvent("message", SocketService.getMessage);
-                sockets[1].emit("message", overrideMsg);
+        it('check last message', async () => {
+            expect.assertions(2);
+            return new Promise<void>(resolve => {
+                const msg = {msg: "testing message"};
+                sockets[1].emit("message", 1);// to cause unhandled exception
+                sockets[1].emit("message", msg);
+                sockets[1].emit("message", "");
+                sockets[1].emit("message", {msg:null});
                 setTimeout(() => {
-                    expect(SocketService.lastMessage['msg']).not.toEqual(overrideMsg);
+                    expect(SocketService.lastMessage['msg']).toEqual(msg.msg);
+                    expect(SocketService.lastMessage['timestamp']).toBeDefined();
                     resolve();
                 }, 50)
-            }, 50);
+            })
+        });
 
-        })
-    });
+        it('check last message - detached', async () => {
+            expect.assertions(1);
+            SocketHandler.getHandler().deregisterSocketEvent("message", SocketService.getMessage);
+            return new Promise<void>(resolve => {
+                const msg = {msg: "testing message-2"};
+                sockets[1].emit("message", msg);
+                setTimeout(() => {
+                    expect(SocketService.lastMessage['msg']).not.toEqual(msg.msg);
+                    resolve();
+                }, 50)
+            })
+        });
 
+        it('check last message - reattach + detached single', async () => {
+            expect.assertions(2);
+
+            return new Promise<void>(resolve => {
+                SocketHandler.getHandler()
+                    .registerSocketEvent("message", SocketService.getMessage);
+
+                let msg = {msg: "testing message-7"};
+                sockets[1].emit("message", msg);
+                setTimeout(() => {
+                    expect(SocketService.lastMessage['msg']).toEqual(msg.msg);
+                    const overrideMsg = {msg: "override"};
+                    SocketHandler.getHandler().deregisterSocketEvent("message", SocketService.getMessage);
+                    sockets[1].emit("message", overrideMsg);
+                    setTimeout(() => {
+                        expect(SocketService.lastMessage['msg']).not.toEqual(overrideMsg);
+                        resolve();
+                    }, 50)
+                }, 50);
+
+            })
+        });
+
+    })
     it('check socket namespace & server', async () => {
         expect.assertions(2);
         return new Promise<void>(resolve => {
