@@ -12,7 +12,9 @@
     "update:patch": "npm version patch && npm publish && npm run docs",
     "update:minor": "npm version minor && npm publish && npm run docs",
     "update:major": "npm version major && npm publish && npm run docs",
-    "build": "rimraf dist && tsc"
+    "build": "rimraf dist && tsc",
+    "release": "standard-version -a"
+
   },
   "files": [
     "dist/**/*"
