@@ -85,7 +85,7 @@ export class SocketHandler implements ISocketHandler {
             SocketHandler._pendingMap[HandlerType.SOCKET].get(namespace).forEach(item => {
                 namespaceHandler.registerSocketEvent(item.event, item.callback, ...item.middlewares)
             });
-            SocketHandler._pendingMap[HandlerType.SOCKET].delete(namespace);
+            // SocketHandler._pendingMap[HandlerType.SOCKET].delete(namespace);
         }
         if (SocketHandler._pendingMap[HandlerType.SERVER].has(namespace)) {
             SocketHandler._pendingMap[HandlerType.SERVER].get(namespace).forEach(item => {

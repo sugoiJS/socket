@@ -1,4 +1,3 @@
-import {SocketEvent} from "../classes/socket-event";
 import {TComparableSchema, ValidateSchemaUtil} from "@sugoi/core";
 import {SocketError} from "../exceptions/socket.exception";
 import {EXCEPTIONS} from "../constants/exceptions.constant";
