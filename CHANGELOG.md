@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [4.3.1](https://github.com/sugoiJS/socket/compare/v4.3.0...v4.3.1) (2021-09-03)
+
+
+### Bug Fixes
+
+* **socket:** connection after init failed to subscribe to all events ([410e145](https://github.com/sugoiJS/socket/commit/410e145f4cf3e4ff44e53ea5005db9ef02651b14))
+
 ## [4.3.0](https://github.com/sugoiJS/socket/compare/v4.2.0...v4.3.0) (2021-08-27)
 
 
